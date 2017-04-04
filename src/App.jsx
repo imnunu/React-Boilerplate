@@ -3,7 +3,12 @@ import React, {Component} from 'react';
 class App extends Component {
   render() {
     return (
-      <h1>Hello React :)</h1>
+      <div>
+        <nav class="navbar">
+          <a href="/" class="navbar-brand">Chatty</a>
+        </nav>
+        <h1>Hello React :)</h1>
+      </div>
     );
   }
 }
