@@ -6,7 +6,7 @@ class MessageList extends Component {
   render() {
     let messages = [];
     this.props.messages.map((message)=>{
-      messages.push(<Message username = {message.username} content = {message.content}/>)  
+      messages.push(<Message key = {Date.now()} username = {message.username} content = {message.content}/>)  
     })
   
     return (
