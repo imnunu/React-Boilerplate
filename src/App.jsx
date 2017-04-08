@@ -3,23 +3,33 @@ import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 import NavBar from './NavBar.jsx';
 
+
+
 //1) Set the initial state
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      currentUser: {name: 'Bob'},
+      currentUser: {name: ''},
       messages: [
         {
           username: 'Bob',
           content: 'Has anyone seens my marbles?'
         },
-        // {
-        //   username: 'Anonymous',
-        //   content: 'No, I think you lost them. You lost your marbles Bob. You lost them for good.'
-        // }
+        {
+          username: 'Anonymous',
+          content: 'No, I think you lost them. You lost your marbles Bob. You lost them for good.'
+        }
       ]
     };
+  }
+
+  sendMessage(data) {
+    const newMessage = {
+      username: this.state.currentUserName.name,
+      content: data.message
+    };
+    this.socket.send(JSON.stringify(newMessage));
   }
   
   componentDidMount() {
@@ -40,7 +50,10 @@ class App extends Component {
       <div>
         <NavBar />
         <MessageList messages = {this.state.messages}/>
-        <ChatBar currentUserprop = {this.state.currentUser.name} />
+        <ChatBar 
+          currentUserName = {this.state.currentUser.name} 
+          sendMessage = {this.sendMessage} 
+          />
       </div>
     );
   }
