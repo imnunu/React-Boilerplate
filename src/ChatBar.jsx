@@ -27,7 +27,7 @@ class ChatBar extends Component {
       event.preventDefault();
       
       const data = {
-        username: this.state.oldName,
+        
         content: event.target.value
       }
      {this.props.sendMessage(data)}

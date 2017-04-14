@@ -30,8 +30,8 @@ wss.broadcast = function broadcast(data) {
 wss.on('connection', (ws) => {
   console.log('Client connected');
   wss.broadcast(JSON.stringify({
-    type: 'onlineUsers',
-    onlineUsers: wss.clients.size
+    type: 'usersOnline',
+    usersOnline: wss.clients.size
   }))
  
   ws.on('message', (message) => {
@@ -63,8 +63,8 @@ wss.on('connection', (ws) => {
   ws.on('close', () => {
     console.log('disconnected');
     wss.broadcast(JSON.stringify({
-    type: 'onlineUsers',
-    onlineUsers: wss.clients.size
+    type: 'usersOnline',
+    usersOnline: wss.clients.size
   }))
   });
 });

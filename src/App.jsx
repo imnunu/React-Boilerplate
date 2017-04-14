@@ -75,6 +75,9 @@ class App extends Component {
           let messages = this.state.messages.concat(data)
           this.setState({messages: messages})
           break;
+        case 'usersOnline':
+          this.setState({usersOnline: data.usersOnline});
+          break;
       }    
     }
   }
@@ -83,7 +86,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <NavBar onlineUsers = {this.state.onlineUsers} />
+        <NavBar usersOnline = {this.state.usersOnline} />
         <MessageList messages = {this.state.messages} />
         <ChatBar sendMessage = {this.sendMessage}
                  postNotification = {this.postNotification}
