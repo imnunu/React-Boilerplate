@@ -10,7 +10,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      currentUser: {name: ''},
+      currentUser: {name: 'Anonymous'},
       messages: []
     };
     this.socket = {};
@@ -26,7 +26,7 @@ class App extends Component {
   sendMessage(data) {
     const newMessage = {
       type: 'postMessage',
-      username: data.name,
+      username: this.state.currentUser.name,
       content: data.content
     };
 

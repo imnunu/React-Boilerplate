@@ -31,11 +31,11 @@ wss.on('connection', (ws) => {
   console.log('Client connected');
   wss.broadcast(JSON.stringify({
     type: 'onlineUsers',
-    onlineUsers: wss.clients.length
+    onlineUsers: wss.clients.size
   }))
  
-  ws.on('message', (data) => {
-    const newMessage = JSON.parse(data);
+  ws.on('message', (message) => {
+    const newMessage = JSON.parse(message);
 
     switch(newMessage.type) {
       case 'postNotification' :
@@ -64,7 +64,7 @@ wss.on('connection', (ws) => {
     console.log('disconnected');
     wss.broadcast(JSON.stringify({
     type: 'onlineUsers',
-    onlineUsers: wss.clients.length
+    onlineUsers: wss.clients.size
   }))
   });
 });
