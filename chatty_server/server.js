@@ -27,22 +27,29 @@ wss.broadcast = function broadcast(data) {
 };
 
 
-// Set up a callback that will run when a client connects to the server
-// When a client connects they are assigned a socket, represented by
-// the ws parameter in the callback.
-
-
 wss.on('connection', (ws) => {
   console.log('Client connected');
  
-  ws.on('close', () => {
-    console.log('disconnected');
+  ws.on('message', (data) => {
+    const newMessage = JSON.parse(data);
+    newMessage.id = uuid();
+
+    switch(newMessage.type) {
+      case 'postNotification' :
+        newMessage.type = 'incomingNotification';
+        break;
+      
+      case 'postMessage' :
+        newMessage.type = 'incomingMessage';
+        break
+    }
+    wss.broadcast(JSON.stringify(newMessage));
   });
 
-  ws.on('message', (message) => {
-    const data = JSON.parse(message);
-    data.id = uuid();
-    wss.broadcast(JSON.stringify(data)); 
+
+
+  ws.on('close', () => {
+    console.log('disconnected');
   });
 });
 

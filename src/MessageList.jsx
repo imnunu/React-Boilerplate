@@ -4,14 +4,30 @@ import Message from './Message.jsx';
 
 class MessageList extends Component {
   render() {
+  const messages = [];
+  for (let i = 0; i < this.props.messages.length; i++) {
+    if (this.props.messages[i].type === 'incomingMessage') {
+      messages.push(
+        <Message key = {this.props.messages[i].id}
+                 username = {this.props.messages[i].username.name}
+                 content = {this.props.messages[i].content} />
+      );
+    } else {
+      messages.push(
+        <SystemMessage key = {this.props.messages[i].id}
+                       content = {this.props.messages[i].content} />
+      );
+    }
+  }
+
+
     return (
       <div className = 'message-list'>
         {
-        this.props.messages.map((message)=>{
-          return(<Message key = {message.id} message = {message} />)
-        })
-      }
-      </div>)
+        messages
+        }
+      </div>
+    );
   }
 }
 export default MessageList;

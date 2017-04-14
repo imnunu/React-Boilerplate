@@ -13,7 +13,9 @@ class App extends Component {
       currentUser: {name: ''},
       messages: []
     };
+    this.socket = {};
     this.sendMessage = this.sendMessage.bind(this);
+    this.postNotification = this.postNotification.bind(this);
   }
   
   // In App.jsx - 
@@ -21,12 +23,13 @@ class App extends Component {
   // so that the new message being sent is added to
   //  this.state.messages (Use .concat)
 
-  sendMessage({username, message: content}) {
+  sendMessage(data) {
     const newMessage = {
-      username,
-      content
+      type: 'postMessage',
+      username: this.state.currentUser.name,
+      content: data.msg
     };
-    console.log('sending this thru socket:', newMessage)
+
     this.socket.send(JSON.stringify(newMessage));
   }
 
@@ -40,6 +43,20 @@ class App extends Component {
     this.setState({currentUser: user});
   }
   
+  postNotification(data) {
+    const newName = data.username;
+
+    if (this.state.currentUser.name !== newName) {
+      const newNotification  = {
+        type: 'postNotification',
+        content: `${this.state.currentUser.name} changed the name to ${newName}`
+      }
+      this.setState({currentUser: {name: newName}});
+      this.socket.send(JSON.stringify(newNotification));
+    }
+
+  }
+
   componentDidMount() {
     this.socket = new WebSocket('ws://localhost:3001');
     
@@ -48,12 +65,17 @@ class App extends Component {
     }
 
     this.socket.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
-          const message = this.state.messages.concat(msg)
-          this.setState({messages: message})
-         
-      }
+      const data = JSON.parse(event.data);
+          
+      switch(data.type) {
+        case 'incomingNotification':
+        case 'incomingMessage':
+          let messages = this.state.messages.concat(data)
+          this.setState({messages: messages})
+          break;
+      }    
     }
+  }
 
 
   render() {
@@ -62,6 +84,7 @@ class App extends Component {
         <NavBar />
         <MessageList messages = {this.state.messages} />
         <ChatBar sendMessage = {this.sendMessage}
+                 postNotification = {this.postNotification}
                  currentUser = {this.state.currentUser} />
       </div>
     )
