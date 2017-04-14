@@ -28,7 +28,7 @@ class ChatBar extends Component {
       
       const data = {
         username: this.state.oldName,
-        msg: event.target.value
+        content: event.target.value
       }
      {this.props.sendMessage(data)}
     }

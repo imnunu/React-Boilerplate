@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Message from './Message.jsx';
+import SystemMessage from './SystemMessage.jsx';
 
 
 class MessageList extends Component {
@@ -9,7 +10,7 @@ class MessageList extends Component {
     if (this.props.messages[i].type === 'incomingMessage') {
       messages.push(
         <Message key = {this.props.messages[i].id}
-                 username = {this.props.messages[i].username.name}
+                 username = {this.props.messages[i].username}
                  content = {this.props.messages[i].content} />
       );
     } else {

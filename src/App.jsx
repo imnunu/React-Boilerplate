@@ -26,11 +26,13 @@ class App extends Component {
   sendMessage(data) {
     const newMessage = {
       type: 'postMessage',
-      username: this.state.currentUser.name,
-      content: data.msg
+      username: data.name,
+      content: data.content
     };
 
     this.socket.send(JSON.stringify(newMessage));
+    this.state.messages.concat(data);
+    this.setState(this.state);
   }
 
 // this.handleUpdateName in ChatBar.jsx - 
@@ -81,11 +83,12 @@ class App extends Component {
   render() {
     return (
       <div>
-        <NavBar />
+        <NavBar onlineUsers = {this.state.onlineUsers} />
         <MessageList messages = {this.state.messages} />
         <ChatBar sendMessage = {this.sendMessage}
                  postNotification = {this.postNotification}
-                 currentUser = {this.state.currentUser} />
+                 currentUser = {this.state.currentUser} 
+                 changeName = {this.changeName} />
       </div>
     )
   }

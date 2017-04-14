@@ -29,27 +29,43 @@ wss.broadcast = function broadcast(data) {
 
 wss.on('connection', (ws) => {
   console.log('Client connected');
+  wss.broadcast(JSON.stringify({
+    type: 'onlineUsers',
+    onlineUsers: wss.clients.length
+  }))
  
   ws.on('message', (data) => {
     const newMessage = JSON.parse(data);
-    newMessage.id = uuid();
 
     switch(newMessage.type) {
       case 'postNotification' :
-        newMessage.type = 'incomingNotification';
+        wss.broadcast(JSON.stringify({
+          type: 'incomingNotification',
+          id: uuid(),
+          content: newMessage.content
+        }));
         break;
       
       case 'postMessage' :
-        newMessage.type = 'incomingMessage';
-        break
+        wss.broadcast(JSON.stringify({
+          type: 'incomingMessage',
+          id: uuid(),
+          username: newMessage.username,
+          content: newMessage.content
+        }));
+        break;
     }
-    wss.broadcast(JSON.stringify(newMessage));
+    
   });
 
 
 
   ws.on('close', () => {
     console.log('disconnected');
+    wss.broadcast(JSON.stringify({
+    type: 'onlineUsers',
+    onlineUsers: wss.clients.length
+  }))
   });
 });
 
