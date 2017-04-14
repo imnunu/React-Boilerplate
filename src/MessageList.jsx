@@ -5,7 +5,7 @@ import SystemMessage from './SystemMessage.jsx';
 
 class MessageList extends Component {
   render() {
-  const messages = [];
+  /*const messages = [];
   for (let i = 0; i < this.props.messages.length; i++) {
     if (this.props.messages[i].type === 'incomingMessage') {
       messages.push(
@@ -19,13 +19,20 @@ class MessageList extends Component {
                        content = {this.props.messages[i].content} />
       );
     }
-  }
+  }*/
 
 
     return (
       <div className = 'message-list'>
         {
-        messages
+        this.props.messages.map((message) => {
+          return (
+            <Message type = {message.type}
+                     key = {message.id}
+                     username = {message.username}
+                     content = {message.content} />
+          )
+        })
         }
       </div>
     );

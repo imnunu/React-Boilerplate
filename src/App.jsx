@@ -10,12 +10,12 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      currentUser: {name: ''},
+      currentUser: {name: 'Anonymous'},
       messages: []
     };
-    this.socket = {};
-    this.sendMessage = this.sendMessage.bind(this);
-    this.postNotification = this.postNotification.bind(this);
+    
+    // this.sendMessage = this.sendMessage.bind(this);
+    // this.postNotification = this.postNotification.bind(this);
   }
   
   // In App.jsx - 
@@ -23,58 +23,78 @@ class App extends Component {
   // so that the new message being sent is added to
   //  this.state.messages (Use .concat)
 
-  sendMessage(data) {
-    const newMessage = {
+  newMessage(message) {
+    const messages = {
       type: 'postMessage',
-      username: data.name,
-      content: data.content
+      username: this.state.currentUser.name,
+      content: message
     };
 
-    this.socket.send(JSON.stringify(newMessage));
-    this.state.messages.concat(data);
-    this.setState(this.state);
+    this.ws.send(JSON.stringify(messages));
+    // this.state.messages.concat(data);
+    // this.setState(this.state);
   }
 
 // this.handleUpdateName in ChatBar.jsx - 
 // going to be the changeName method, 
 // passed down as props from App.jsx.
 
-  changeName(name) {
-    let user = this.state.currentUser;
-    user.name = name;
-    this.setState({currentUser: user});
+  // changeName(name) {
+  //   let user = this.state.currentUser;
+  //   user.name = name;
+  //   this.setState({currentUser: user});
+  // }
+
+  handleNameChange(user) {
+    let changeUser = {
+      type: 'postNotification',
+      content: `${this.state.currentUser.name} changed the name to ${user}`
+    }
+    this.setState({currentUser:{name: user}})
+    this.ws.send(JSON.stringify(changeUser))
   }
   
-  postNotification(data) {
-    const newName = data.username;
+  // postNotification(data) {
+  //   const newName = data.username;
 
-    if (this.state.currentUser.name !== newName) {
-      const newNotification  = {
-        type: 'postNotification',
-        content: `${this.state.currentUser.name} changed the name to ${newName}`
-      }
-      this.setState({currentUser: {name: newName}});
-      this.socket.send(JSON.stringify(newNotification));
-    }
+  //   if (this.state.currentUser.name !== newName) {
+  //     const newNotification  = {
+  //       type: 'postNotification',
+  //       content: `${this.state.currentUser.name} changed the name to ${newName}`
+  //     }
+  //     this.setState({currentUser: {name: newName}});
+  //     this.ws.send(JSON.stringify(newNotification));
+  //   }
 
-  }
+  // }
 
   componentDidMount() {
-    this.socket = new WebSocket('ws://localhost:3001');
+    this.ws = new WebSocket('ws://localhost:3001');
     
-    this.socket.onopen = (event) => {
+    this.ws.onopen = (event) => {
       console.log('connected to server');
     }
 
-    this.socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+    this.ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
           
-      switch(data.type) {
+      switch(message.type) {
         case 'incomingNotification':
-        case 'incomingMessage':
-          let messages = this.state.messages.concat(data)
-          this.setState({messages: messages})
+          const notification = this.state.messages.concat(message);
+          this.setState({messages: notification});
           break;
+
+        case 'incomingMessage':
+          const messages = this.state.messages.concat(message);
+          this.setState({messages: messages});
+          break;
+
+        // case 'updateUserCount':
+        //   this.setState({onlineUsers: data.userCount});
+        //   break;
+
+      //  default:
+      //    throw new Error('Unlnown event type' + data.type); 
       }    
     }
   }
@@ -85,10 +105,9 @@ class App extends Component {
       <div>
         <NavBar onlineUsers = {this.state.onlineUsers} />
         <MessageList messages = {this.state.messages} />
-        <ChatBar sendMessage = {this.sendMessage}
-                 postNotification = {this.postNotification}
-                 currentUser = {this.state.currentUser} 
-                 changeName = {this.changeName} />
+        <ChatBar newMessage = {this.newMessage}
+                 username = {this.state.currentUser} 
+                 handleChange = {this.handleNameChange} />
       </div>
     )
   }
